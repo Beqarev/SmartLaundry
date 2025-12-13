@@ -1,8 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace SmartLaundry.Entities;
 
 public class User
 {
-    public int Id { get; set; }
+    [Key]
     public required string UserEmail { get; set; }
     public bool NeedNotify { get; set; }
+    public List<Machine> Machines { get; set; }
 }
