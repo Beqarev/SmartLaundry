@@ -34,7 +34,7 @@ namespace SmartLaundry.Services
                     new
                     {
                         MachineId = machineId,
-                        Timestamp = DateTime.Now
+                        Timestamp = DateTime.UtcNow
                     });
 
                 // Update NeedNotify to false for all users

@@ -19,6 +19,7 @@ builder.Services.AddSignalR();
 
 // Register services
 builder.Services.AddScoped<IMachineNotificationService, MachineNotificationService>();
+builder.Services.AddHostedService<MachineExpirationBackgroundService>();
 
 var app = builder.Build();
 

@@ -45,7 +45,7 @@ namespace SmartLaundry.Services
                 var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
                 var notificationService = scope.ServiceProvider.GetRequiredService<IMachineNotificationService>();
 
-                var now = DateTime.Now;
+                var now = DateTime.UtcNow;
 
                 // Find machines that have expired but haven't been marked as expired
                 var expiredMachines = dbContext.Machines

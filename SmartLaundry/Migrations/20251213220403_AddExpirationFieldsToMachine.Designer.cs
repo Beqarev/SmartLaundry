@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SmartLaundry;
@@ -11,9 +12,11 @@ using SmartLaundry;
 namespace SmartLaundry.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20251213220403_AddExpirationFieldsToMachine")]
+    partial class AddExpirationFieldsToMachine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,6 +41,7 @@ namespace SmartLaundry.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("UserEmail")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -64,7 +68,9 @@ namespace SmartLaundry.Migrations
                 {
                     b.HasOne("SmartLaundry.Entities.User", "User")
                         .WithMany("Machines")
-                        .HasForeignKey("UserEmail");
+                        .HasForeignKey("UserEmail")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

@@ -8,6 +8,8 @@ using Machine = SmartLaundry.Entities.Machine;
 
 namespace SmartLaundry.Controllers;
 
+[Route("api/[controller]")]
+[ApiController]
 public class MachineController : ControllerBase
 {
     private readonly DataContext _context;
@@ -18,7 +20,7 @@ public class MachineController : ControllerBase
     }
 
 
-    [HttpPut]
+    [HttpPut("update-machine-state")]
     public async Task<IActionResult> UpdateState([FromBody] DetectionMachineDto machineDto)
     {
         // getting machine by id 
@@ -36,8 +38,8 @@ public class MachineController : ControllerBase
         else if (machineDto.MachineState == MachineState.Available)
         {
             currentMachine.MachineState = MachineState.Reserved;
-            currentMachine.ExpirationTime = DateTime.Now.AddMinutes(3);
-            currentMachine.User.UserEmail = null;
+            currentMachine.ExpirationTime = DateTime.UtcNow.AddMinutes(3);
+            currentMachine.UserEmail = null;
         }
         await _context.SaveChangesAsync();
 
