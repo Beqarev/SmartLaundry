@@ -1,4 +1,4 @@
-namespace SmartLaundry.Model;
+namespace SmartLaundry.Entities;
 
 public class Machine
 {
