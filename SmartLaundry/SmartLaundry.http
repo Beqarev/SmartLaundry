@@ -1,0 +1,6 @@
+@SmartLaundry_HostAddress = http://localhost:5198
+
+GET {{SmartLaundry_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

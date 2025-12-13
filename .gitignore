@@ -1,0 +1,67 @@
+## Ignore Visual Studio / Rider files
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Build results
+bin/
+obj/
+out/
+
+## .NET publish output
+**/publish/
+
+## Logs
+*.log
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Rider
+*.DotSettings.user
+
+## ASP.NET Core
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.json
+
+## Secrets
+secrets.json
+*.env
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+## Test results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+## Temporary files
+*.tmp
+*.temp
+*.swp
+*.bak
+*.old
+
+## Database
+*.mdf
+*.ldf
+
+## Docker
+docker-compose.override.yml
+
+## Publish profiles
+Properties/PublishProfiles/
+
+## JetBrains Rider
+.idea/
