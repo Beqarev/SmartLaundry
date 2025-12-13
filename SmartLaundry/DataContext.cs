@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SmartLaundry.Entities;
 using SmartLaundry.Model;
 
 namespace SmartLaundry;
