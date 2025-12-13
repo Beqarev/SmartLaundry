@@ -1,23 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
 using SmartLaundry.DTO;
 using SmartLaundry.Model;
+using SmartLaundry.Services;
 using Machine = SmartLaundry.Entities.Machine;
-using User = SmartLaundry.Entities.User;
 
 namespace SmartLaundry.Controllers;
 
 public class UserController : ControllerBase
 {
+    private readonly DataContext _context;
+
+    public UserController(DataContext context, IMachineNotificationService machineNotificationService)
+    {
+        _context = context;
+    }
+
+
     [HttpGet]
     public async Task<ActionResult<List<GetMachineDto>>> GetMachines()
     {
         // get machines from database
-        var machines = new List<Machine>
-        {
-        };
+        var machines = _context.Machines.ToList();
 
         machines.ForEach(UpdateMachine);
-        // save changes to db
+
+        _context.SaveChanges();
 
         var result = machines.Select(e => e.ToGetMachineDto()).ToList();
 
@@ -25,42 +32,45 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> NotifyMe()
+    public async Task<ActionResult> NotifyMe(string userEmail)
     {
         // getting user 
-        var user = new User() { UserEmail = "fdasfd"};
+        var user = _context.Users.Find(userEmail);
 
         user.NeedNotify = true;
-        // save to db
+        
+        await _context.SaveChangesAsync();
+
         return Ok();
     }
 
     [HttpPost]
-    public async Task<ActionResult> ReserveMachine(int machineId)
+    public async Task<ActionResult> ReserveMachine(int machineId, string userEmail)
     {
-        // getting machine by id
-        var machine = new Machine
+        var machine = _context.Machines.Find(machineId);
+
+        if (machine == null)
         {
-            Id = machineId,
-            MachineState = MachineState.Available,
-            CurrentUserEmail = string.Empty
-        };
+            return NotFound("Machine not found.");
+        }
 
         if (machine.MachineState != MachineState.Available)
         {
             return BadRequest("Machine is not available for reservation.");
         }
 
-        if (machine.CurrentUserEmail != string.Empty)
+        if (machine.User.UserEmail != string.Empty ||
+            machine.User.UserEmail != null)
         {
             return BadRequest("Machine is already reserved by another user.");
         }
 
         machine.MachineState = MachineState.Reserved;
-        machine.CurrentUserEmail = "currentUser";
+        machine.User.UserEmail = userEmail;
         machine.ExpirationTime = DateTime.Now.AddMinutes(3);
 
-        // save to db
+        await _context.SaveChangesAsync();
+
         return Ok();
     }
 
@@ -69,7 +79,7 @@ public class UserController : ControllerBase
         if (machine.MachineState == MachineState.Reserved && machine.ExpirationTime <= DateTime.Now)
         {
             machine.MachineState = MachineState.Available;
-            machine.CurrentUserEmail = string.Empty;
+            machine.User.UserEmail = null;
             machine.ExpirationTime = null;
         }
     }

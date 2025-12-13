@@ -1,5 +1,4 @@
 ﻿using SmartLaundry.DTO;
-using SmartLaundry.Model;
 
 namespace SmartLaundry
 {
@@ -7,7 +6,6 @@ namespace SmartLaundry
     {
         public static GetMachineDto ToGetMachineDto(this Entities.Machine machine)
         {
-
             return new GetMachineDto
             {
                 MachineId = machine.Id,

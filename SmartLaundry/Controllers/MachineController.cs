@@ -10,21 +10,20 @@ namespace SmartLaundry.Controllers;
 
 public class MachineController : ControllerBase
 {
-    public MachineController()
+    private readonly DataContext _context;
+
+    public MachineController(DataContext context)
     {
-        
+        _context = context;
     }
+
 
     [HttpPut]
     public async Task<IActionResult> UpdateState([FromBody] DetectionMachineDto machineDto)
     {
         // getting machine by id 
-        var currentMachine = new Machine
-        {
-            Id = machineDto.Id,
-            MachineState = MachineState.Available,
-            CurrentUserEmail = "fdsa"
-        };  
+        var currentMachine = _context.Machines.Find(machineDto.Id);
+
         if (currentMachine.MachineState == machineDto.MachineState)
         {
             return Ok();
@@ -38,9 +37,9 @@ public class MachineController : ControllerBase
         {
             currentMachine.MachineState = MachineState.Reserved;
             currentMachine.ExpirationTime = DateTime.Now.AddMinutes(3);
-            currentMachine.CurrentUserEmail = string.Empty;
+            currentMachine.User.UserEmail = null;
         }
-
+        await _context.SaveChangesAsync();
 
         // save changes to database
 

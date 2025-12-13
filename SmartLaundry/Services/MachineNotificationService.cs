@@ -4,25 +4,27 @@ namespace SmartLaundry.Services
 {
     public interface IMachineNotificationService
     {
-        Task NotifyMachineAvailable(string machineId, string machineName);
+        Task NotifyMachineAvailable(int machineId);
     }
-    public class MachineNotificationService
+    public class MachineNotificationService : IMachineNotificationService
     {
         private readonly IHubContext<MachineNotificationHub> _hubContext;
-        private readonly IUserRepository _userRepository; // Your user repository
+        private readonly DataContext _context;
 
         public MachineNotificationService(
             IHubContext<MachineNotificationHub> hubContext,
-            IUserRepository userRepository)
+            DataContext userRepository)
         {
             _hubContext = hubContext;
-            _userRepository = userRepository;
+            _context = userRepository;
         }
 
-        public async Task NotifyMachineAvailable(string machineId, string machineName)
+        public async Task NotifyMachineAvailable(int machineId)
         {
             // Get all users who need notification
-            var usersToNotify = await _userRepository.GetUsersWithNotificationAsync();
+            var usersToNotify = _context.Users
+                .Where(u => u.NeedNotify)
+                .ToList();
 
             if (usersToNotify.Any())
             {
@@ -32,12 +34,12 @@ namespace SmartLaundry.Services
                     new
                     {
                         MachineId = machineId,
-                        MachineName = machineName,
-                        Timestamp = DateTime.UtcNow
+                        Timestamp = DateTime.Now
                     });
 
                 // Update NeedNotify to false for all users
-                await _userRepository.ResetNotificationFlagsAsync(usersToNotify.Select(u => u.Id));
+                usersToNotify.ForEach(u => u.NeedNotify = false);
+                await _context.SaveChangesAsync();
             }
         }
     }
