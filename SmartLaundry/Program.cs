@@ -21,8 +21,18 @@ builder.Services.AddSignalR();
 builder.Services.AddScoped<IMachineNotificationService, MachineNotificationService>();
 builder.Services.AddHostedService<MachineExpirationBackgroundService>();
 
-var app = builder.Build();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
+var app = builder.Build();
+app.UseCors();
 // Map SignalR hub
 
 app.MapHub<MachineNotificationHub>("/machineNotificationHub");
