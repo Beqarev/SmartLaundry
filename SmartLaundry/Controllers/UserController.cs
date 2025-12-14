@@ -80,8 +80,7 @@ public class UserController : ControllerBase
             return BadRequest("Machine is not available for reservation.");
         }
 
-        if (machine.UserEmail != string.Empty &&
-            machine.UserEmail != null)
+        if (machine.MachineState == MachineState.Reserved)
         {
             return BadRequest("Machine is already reserved by another user.");
         }
